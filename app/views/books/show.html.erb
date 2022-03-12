@@ -1,0 +1,13 @@
+<p id="notice"><%= notice %></p>
+
+<h2>Title</h2>
+<p><%= @book.title %></p>
+
+<h2>Body</h2>
+<p><%= @book.body %></p>
+
+<!--名前付きルートには""はいらない-->
+<%= link_to "Edit", edit_book_path(@book.id) %>
+
+<!--最初、/booksの部分に""をつけていなかったせいで、画面遷移時、エラーが発生した-->
+<%= link_to "Back", "/books" %>

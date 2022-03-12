@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bookers</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <!--「= yield」にて他のviewファイル(index.htmlとか)が読み込まれ、そのviewファイルの内容が画面に表示される。
+    <!--今回は画面の上部にflashメッセージを表示させたいので、「= yield」の前(他のviewファイルを読み込む前)にflashメッセージを実装している-->
+    <!--.notifications <!--flashメッセージの親要素となるdivタグを定義-->
+    <!--  - flash.each do |key, value| <!--flashオブジェクトの呼び出し。投稿成功の場合は、keyに"notice"、valueに"メッセージが送信されました"が入る-->
+        <!--content_tagを使用してflashメッセージを表示させるためのdivタグを作成。前述の通り、keyに"notice"、valueに"メッセージが送信されました"が
+    <!--    入っているため、class名が"notice"、表示させる内容が"メッセージが送信されました"となる-->
+        <!--content_tagはHTMLタグを生成するメソッドで、以下のように使う。
+    <!--    content_tag(作成するタグの種類, 表示したい内容, class等のオプション)-->
+    <!--    = content_tag(:div, value, class: key)-->
+    <%= yield %>
+  </body>
+</html>

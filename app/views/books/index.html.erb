@@ -1,0 +1,99 @@
+<!--最初、<form class="new_book"></form>をform_withとセットで使ってしまい、入力フォームを二重に作ってしまっていたせいでバグが起きていた-->
+
+<h1>Books</h1>
+
+<!--<tr>：「table row」の略で表の行部分（横方向）を指定するタグ。
+<tr>～</tr>で表の横部分を指定し、その中に<th>～</th>や<td>～</td>で表題や縦軸を指定-->
+<!--th要素のcolspan属性は、表(テーブル)における、水平方向の見出しセルの結合数（セルがまたがる列数）を指定する属性-->
+<!--<thead>タグって必要？-->
+<table>
+
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Body</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <!--eachメソッドは、配列やハッシュがもつ要素を順番に取得して処理を実行する-->
+    <!--@books.eachと記述することで、Bookレコードの数だけ繰り返し処理を行う。各レコードの内容はbookという変数に格納される-->
+    <% @books.each do |book| %>
+      <!--書式は、「link_to 表示させるテキスト , リンク先URL [,オプション]」　※今回、オプションは設定しない-->
+      <!--名前付きルートになったので、リンク先URLの部分は"/books/#{book.id}"からbook_path(book.id)に変更している-->
+      <tr>
+        <td><%= book.title %></td>
+        <td><%= book.body %></td>
+        <td>
+          <%= link_to "Show", book_path(book.id) %>
+        </td>
+        <td>
+          <%= link_to "Edit", edit_book_path(book.id) %>
+        </td>
+        <td>
+          <%= link_to "Destroy", destroy_book_path(book.id), method: :delete, "data-confirm" => "Are you sure?" %>
+        </td>
+      </tr>
+    <% end %>
+
+    <!--上記のrubyのeachメソッドでは一つ一つデータを取り出して、以下のようなHTMLに変換してviewで表示している-->
+    <!--<tr>-->
+    <!--  <td>リーダブルコード</td>-->
+    <!--  <td>より良いコードを書くためのシンプルで実践的なテクニック</td>-->
+    <!--  <td>-->
+    <!--    <a class="show_54070" href="/books/54070">Show</a>-->
+    <!--  </td>-->
+    <!--  <td>-->
+    <!--    <a class="edit_54070" href="/books/54070/edit">Edit</a>-->
+    <!--  </td>-->
+    <!--  <td>-->
+    <!--    <a data-confirm="Are you sure?" class="destroy_54070" rel="nofollow" data-method="delete" href="/books/54070">Destroy</a>-->
+    <!--  </td>-->
+    <!--</tr>-->
+
+  </tbody>
+
+</table>
+
+<h2>New book</h2>
+
+<!--errors…モデルにバリデーションをかけた時に、発生したエラーの内容を確認出来るメソッド。
+any? と組み合わせることで、エラーが発生しているかどうかを判定出来る。
+また、full_messagesと組み合わせることで、エラーの内容を出力出来る。 (この時、エラー文は配列で保存されているため、eachを使う)-->
+<% if @book.errors.any? %>
+  <%= @book.errors.count %>errors prohibited this book from being saved:
+  <ul>
+    <% @book.errors.full_messages.each do |message| %>
+      <li><%= message %></li> <!--ここで配列|message|から取り出した、該当のエラーメッセージを出力している-->
+    <% end %>
+  </ul>
+<% end %>
+
+<!--form_with…viewファイルで使用することが出来る、フォームの作成に用いられるメソッド。-->
+<!--|f|の部分はブロック変数と言い、特定の範囲内で使える変数のこと。今回だとform_withのdoからendまでの範囲で使える。-->
+<!--このブロック変数「f」には設定したmodelの情報(今回であればBook.new or @book)も含まれている-->
+<%= form_with model: @book, url: '/books', method: :post do |f| %>
+  <!--「:title」の部分にはプロパティが入ることになり、ブロック変数「f」にはBookモデルの情報も入っているため、
+  このプロパティ名をtitleとすることで、BookモデルにあるtitleカラムだとRailsは判別することができ、DBに保存することが出来る-->
+  <!--ヘルパー(モデルオブジェクト)「text_field」は単一行のテキストフィールドを提供する部品-->
+  <!--「f.text_field」「f.text_area」「f.submit」の「f」はブロック変数「f」のことだよー　byメンター-->
+  <div class="field">
+    <label for="book_title">Title</label>
+    <div class="book_title">
+      <%= f.text_field :title %>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="book_body">Body</label>
+    <div class="book_body">
+      <!--ヘルパー(モデルオブジェクト)「text_area」は複数行のテキストフィールドを提供する部品-->
+      <%= f.text_area :body %>
+    </div>
+  </div>
+
+  <!--わざわざ<div class="actions"></div>でクラス名をつける必要はない-->
+    <%= f.submit 'Create Book', class: "actions" %>
+
+<% end %>
